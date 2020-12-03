@@ -1,5 +1,6 @@
 import java.io.File
 import java.io.BufferedReader
+const val DEBUG_DETAIL:Boolean = false
 
 fun main() {
     val input = File("input_1-1.txt").readText().replace("\n","").split(",").map { it.toInt() }
@@ -7,6 +8,7 @@ fun main() {
     december01_1(input)
     december01_2(input)
     december02()
+    december03()
 }
 
 fun december01_1(input: List<Int>){    
@@ -51,7 +53,43 @@ fun december02(){
         passwordRule
     }
     println("02.12 Passwords valid1: ${ruleLst.filter{it.validWay1}.size} valid2: ${ruleLst.filter{it.validWay2}.size}")
+}
 
+fun december03(){
+    val bufferedReader = File("input_3-1.txt").bufferedReader()
+    val lineList = mutableListOf<String>()
+    bufferedReader.useLines { lines -> lines.forEach { lineList.add(it.replace("\\","")) } }
+    val v1 = december03_2(1,1,lineList).toLong()
+    val v2 = december03_2(3,1,lineList).toLong()
+    val v3 = december03_2(5,1,lineList).toLong()
+    val v4 = december03_2(7,1,lineList).toLong()
+    val v5 = december03_2(1,2,lineList).toLong()
+    val multiplied:Long = (v1*v2*v3*v4*v5)
+    println("03.12. multiplied: $multiplied")
+}
+
+fun december03_2(right: Int = 3, down: Int = 1, lineList:List<String>):Int{
+    var countTrees = 0
+    var index = 0
+
+    lineList.forEachIndexed{ i, line ->
+        val lineArray = line.toCharArray()
+
+        if(i>0 && i%down==0){
+            index++
+            val lineIndex = (index*right)%line.length
+            if(lineArray[lineIndex]=='#'){
+                countTrees++
+                lineArray[lineIndex] = 'X'
+            }else{
+                lineArray[lineIndex] = '0'
+            }
+        }
+        if(DEBUG_DETAIL)
+            println(String(lineArray))
+    }
+    println("03.12. right: $right down: $down trees hit: $countTrees")
+    return countTrees
 
 }
 
