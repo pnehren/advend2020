@@ -3,12 +3,14 @@ import java.io.BufferedReader
 const val DEBUG_DETAIL:Boolean = false
 
 fun main() {
+    /*
     val input = File("input_1-1.txt").readText().replace("\n","").split(",").map { it.toInt() }
-
     december01_1(input)
     december01_2(input)
     december02()
     december03()
+    */
+    december04()
 }
 
 fun december01_1(input: List<Int>){    
@@ -90,10 +92,32 @@ fun december03_2(right: Int = 3, down: Int = 1, lineList:List<String>):Int{
     }
     println("03.12. right: $right down: $down trees hit: $countTrees")
     return countTrees
+}
 
+fun december04(){
+    val validPassports=mutableListOf<Passport>()
+    File("input_4-1.txt").bufferedReader().use { it.readLines().joinToString().replace(", ,","\n")}.split("\n").forEach { 
+        val passMap = (it.trim()).split(" ").map { it.split(":")[0] to it.split(":")[1] }.toMap()
+        try{ validPassports.add(
+                Passport(passMap.get("byr")!!,passMap.get("iyr")!!,passMap.get("eyr")!!,passMap.get("hgt")!!,passMap.get("hcl")!!,passMap.get("ecl")!!,passMap.get("pid")!!,passMap.get("cid"))
+            )
+        }catch(e:Exception){} 
+     }
+    println("04.12. Passports: ${validPassports.size}")
 }
 
 data class Rule(val min:Int, val max: Int, val char:Char, val pwd: String){
     var validWay1 = false
     var validWay2 = false
+}
+
+data class Passport( val byr:String, val iyr:String, val eyr:String, val hgt:String, val hcl:String, val ecl:String, val pid:String, val cid:String?){
+    /* var valid = false
+    var hgtValid = when{
+        hgt.contains("cm") -> true
+        hgt.contains("in") -> true
+        else -> false
+    } 
+    if(byr in 1902..2002 && iyr in 2010..2020 && eyr in 2020..2030)
+    */
 }
