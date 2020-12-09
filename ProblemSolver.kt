@@ -12,8 +12,9 @@ fun main() {
     december04()
     december05()
     december06()
-    */
     december09()
+    */
+    december08()
 }
 
 fun december01_1(input: List<Int>){    
@@ -154,7 +155,34 @@ fun december07(){
 }
 
 fun december08(){
-    //TODO
+    data class BootSequence(val proc: String, val seqVal:Int, var count:Int=0){}
+    var acc = 0
+    var index = 0
+    var finished = false
+    val boot=mutableListOf<BootSequence>()
+    File("input_8.txt").bufferedReader().use { 
+        it.readLines().forEach { line->
+            line.split(" ").apply { 
+                boot.add(BootSequence(this.first(),this[1].toInt()))
+             }
+        }
+    }
+    while(!finished){
+        val currentBootSeq = boot[index]
+        println("i: $index c: $currentBootSeq acc: $acc")
+        if(currentBootSeq.count>0)
+            finished =true
+        if(!finished) when(currentBootSeq.proc){
+            "nop" -> index++
+            "acc" -> { 
+                acc += currentBootSeq.seqVal
+                index++ 
+            }
+            "jmp" -> index += currentBootSeq.seqVal
+            else ->{}
+        }
+        currentBootSeq.count ++
+    }
 }
 
 
