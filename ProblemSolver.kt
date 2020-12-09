@@ -9,8 +9,11 @@ fun main() {
     december01_2(input)
     december02()
     december03()
-    */
     december04()
+    december05()
+    december06()
+    */
+    december09()
 }
 
 fun december01_1(input: List<Int>){    
@@ -34,6 +37,10 @@ fun december01_2(input: List<Int>){
     }
 }
 fun december02(){
+    data class Rule(val min:Int, val max: Int, val char:Char, val pwd: String){
+        var validWay1 = false
+        var validWay2 = false
+    }
 
     val bufferedReader = File("input_2-1.txt").bufferedReader()
     val lineList = mutableListOf<String>()
@@ -95,6 +102,8 @@ fun december03_2(right: Int = 3, down: Int = 1, lineList:List<String>):Int{
 }
 
 fun december04(){
+    data class Passport( val byr:String, val iyr:String, val eyr:String, val hgt:String, val hcl:String, val ecl:String, val pid:String, val cid:String?){}
+
     val validPassports=mutableListOf<Passport>()
     File("input_4-1.txt").bufferedReader().use { it.readLines().joinToString().replace(", ,","\n")}.split("\n").forEach { 
         val passMap = (it.trim()).split(" ").map { it.split(":")[0] to it.split(":")[1] }.toMap()
@@ -106,18 +115,89 @@ fun december04(){
     println("04.12. Passports: ${validPassports.size}")
 }
 
-data class Rule(val min:Int, val max: Int, val char:Char, val pwd: String){
-    var validWay1 = false
-    var validWay2 = false
+fun december05(){
+    data class Seat(val row:Int, val column:Int, val seatId:Int){}
+    val seats=mutableListOf<Seat>()
+    File("input_5.txt").bufferedReader().use { 
+        it.readLines().forEach { line->
+            var row = 128
+            var col = 8
+            line.toCharArray().forEachIndexed {charIndex, char->
+                if(charIndex<7){
+                    val diff = Math.pow(2.0,6.0-(charIndex)).toInt()
+                    row = if(char=='B') + diff else - diff
+                }
+                if(charIndex>6){
+                    val diff = Math.pow(2.0,3.0-(charIndex-6)).toInt()
+                    col = if(char=='R') + diff else -diff
+                }
+            }
+            seats.add(Seat(row/2, col/2,  row/2*8+col/2))
+        }
+    }
+    println("05.12. highest: ${seats.maxBy { it.seatId }}")
+    seats.filter{ seat ->
+        val before: Seat? = seats.firstOrNull{it.seatId == seat.seatId-1}
+        val after: Seat? = seats.firstOrNull{it.seatId == seat.seatId+1}
+        before == null || after == null
+    }.forEach { 
+        println(it.seatId)
+     }
 }
 
-data class Passport( val byr:String, val iyr:String, val eyr:String, val hgt:String, val hcl:String, val ecl:String, val pid:String, val cid:String?){
-    /* var valid = false
-    var hgtValid = when{
-        hgt.contains("cm") -> true
-        hgt.contains("in") -> true
-        else -> false
-    } 
-    if(byr in 1902..2002 && iyr in 2010..2020 && eyr in 2020..2030)
-    */
+fun december06(){
+    //TODO
+}
+
+fun december07(){
+    //TODO
+}
+
+fun december08(){
+    //TODO
+}
+
+
+data class Number(val value:Long){
+    var valid = false
+}
+val numbers = mutableListOf<Number>()
+fun december09(){
+    File("input_9.txt").bufferedReader().use { 
+        it.readLines().forEach { line->
+            val currentNumber = Number(line.toLong())
+            numbers.add(currentNumber)
+            val sublist = if(numbers.size>25)
+                numbers.subList(numbers.size-26, numbers.size-1)
+                else { 
+                    currentNumber.valid = true
+                    return@forEach
+                }
+            sublist.forEachIndexed{index, first->
+                sublist.subList(index,sublist.size).forEach{second->
+                    if(first.value != second.value && first.value+second.value == currentNumber.value)
+                        currentNumber.valid = true
+                }
+            }
+
+        }
+    }
+    val notValidValue = numbers.firstOrNull{!it.valid}?.value ?: -1
+    println("First not valid: ${notValidValue}")
+
+    numbers.forEach { 
+        if(it.value != notValidValue)
+        recursiveSum(it.value,numbers.indexOf(it),numbers.indexOf(it)+1,notValidValue)
+     }
+}
+
+fun recursiveSum(sum:Long, from: Int, to:Int, lookFor:Long):Long{
+    if(sum>lookFor || to > numbers.size) return 0
+    val tempSum = sum+numbers[to].value
+    if(tempSum == lookFor){
+        val multiply = numbers[from].value+numbers[to].value
+        println("Match. sum: $sum from: $from to: $to m: $multiply")
+        return 0
+    }
+    else return recursiveSum(tempSum,from, to+1,lookFor)   
 }
