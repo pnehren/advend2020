@@ -12,9 +12,10 @@ fun main() {
     december04()
     december05()
     december06()
+    december08()
     december09()
     */
-    december08()
+    december10()
 }
 
 fun december01_1(input: List<Int>){    
@@ -136,7 +137,7 @@ fun december05(){
             seats.add(Seat(row/2, col/2,  row/2*8+col/2))
         }
     }
-    println("05.12. highest: ${seats.maxBy { it.seatId }}")
+    println("05.12. highest: ${seats.maxByOrNull { it.seatId }}")
     seats.filter{ seat ->
         val before: Seat? = seats.firstOrNull{it.seatId == seat.seatId-1}
         val after: Seat? = seats.firstOrNull{it.seatId == seat.seatId+1}
@@ -229,3 +230,62 @@ fun recursiveSum(sum:Long, from: Int, to:Int, lookFor:Long):Long{
     }
     else return recursiveSum(tempSum,from, to+1,lookFor)   
 }
+
+fun december10(){
+    val numbers = File("input_10.txt").bufferedReader().use { 
+        it.readLines().map { line->
+            line.toInt()
+        }
+    }.sorted()
+    var index = 0
+    var count1 = 0
+    var count3 = 0
+    val end = numbers.maxOrNull() ?: 0
+    var finished = false
+    while(!finished){
+        if(index==end){
+            count3++
+            finished = true
+        }
+        else{
+            if(numbers.find { it==index+1 } !=null){
+                index++
+                count1++
+            }else{
+                if(numbers.find { it==index+3 } !=null){
+                    index+=3
+                    count3++
+                }
+            }
+        }
+    }
+    println("10.12. c1: $count1 c2: $count3 multiplied: ${count1*count3}")
+    println("10.12. total: ${totalCombinations(numbers)}")
+}
+
+/* fun recursiveSum2(index: Int,lookFor:Int, list:List<Int>):Long{
+    if(index==lookFor) return 1
+    if(list.find { it==index }==null && index != 0)
+        return 0
+    else{
+        return recursiveSum2(index+1,lookFor,list)+recursiveSum2(index+2,lookFor,list)+recursiveSum2(index+3,lookFor,list)
+    }
+} */
+//Inspired by NG
+fun totalCombinations (adapters:List<Int>):Long {
+    val N = adapters [adapters.size-1]; // Ausgabe des letzten Adapters; das wird dann vom Gerät selbst noch +3 erhöht
+    assert (N >= adapters.size);
+    val combinations = Array(N+3){0L}
+    combinations [0] = 0; combinations [1] = 0; combinations [2] = 1;
+    var k = 0;
+
+    for (i in 0 ..N-1) {
+      assert (adapters [k] >= i+1);
+      if (adapters [k] == i+1) {
+        ++k;
+        combinations [i+3] = combinations [i+2]+combinations [i+1]+combinations [i];
+      } else
+        combinations [i+3] = 0;
+    }
+    return combinations [N+2];
+  }
